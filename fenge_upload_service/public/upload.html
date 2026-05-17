@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>枫哥 AI 编程特战营 | 作战指挥中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { border-bottom: 2px solid #10B981; color: #111827; font-weight: 600; }
+        .tab-inactive { color: #6b7280; border-bottom: 2px solid transparent; }
+        .tab-inactive:hover { color: #374151; border-color: #d1d5db; }
+        /* 隐藏滚动条但保留功能 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+    <script>
+        // Auto-redirect IP to Domain
+        if (window.location.hostname === '47.121.114.176') {
+            window.location.hostname = 'fengeai.cn';
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-xl font-bold tracking-tight text-emerald-600 hover:text-emerald-700 transition-colors">🚀 枫哥 AI 编程特战营</a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <button onclick="switchTab('gallery')" id="tab-gallery" class="tab-active inline-flex items-center px-1 pt-1 text-sm font-medium border-emerald-500 text-gray-900">
+                            荣誉殿堂
+                        </button>
+                        <button onclick="switchTab('guide')" id="tab-guide" class="tab-inactive inline-flex items-center px-1 pt-1 text-sm font-medium border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                            作战大纲
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button onclick="showUploadModal()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                        提交作品
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Gallery View -->
+        <div id="view-gallery" class="space-y-6">
+            <div class="text-center sm:text-left">
+                <h2 class="text-2xl font-bold text-gray-900">最新战果</h2>
+                <p class="mt-1 text-sm text-gray-500">见证从 0 到 1 的创造力爆发。</p>
+            </div>
+            
+            <!-- Grid -->
+            <div id="projectGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Loading State -->
+                <div class="col-span-full text-center py-12 text-gray-400">
+                    正在加载作战数据...
+                </div>
+            </div>
+        </div>
+
+        <!-- Guide View (Hidden by default) -->
+        <div id="view-guide" class="hidden max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+            <h2 class="text-2xl font-bold mb-6">作战大纲 (简报)</h2>
+            <div class="space-y-8 relative border-l border-gray-200 ml-3">
+                <div class="mb-10 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-emerald-600 rounded-full -left-3 ring-8 ring-white text-white text-xs">1</span>
+                    <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Day 1-2: 单兵装备</h3>
+                    <p class="mb-4 text-base font-normal text-gray-500">配置 Trae/Cursor，掌握 Prompt SOP，生成第一个静态页面。</p>
+                </div>
+                <div class="mb-10 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-emerald-600 rounded-full -left-3 ring-8 ring-white text-white text-xs">2</span>
+                    <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Day 3-6: 实战演练</h3>
+                    <p class="mb-4 text-base font-normal text-gray-500">Tailwind 美化 UI，JS 实现交互 (电子木鱼)，API 获取数据 (新年签)。</p>
+                </div>
+                <div class="ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-emerald-600 rounded-full -left-3 ring-8 ring-white text-white text-xs">3</span>
+                    <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Day 7: 发射日</h3>
+                    <p class="mb-4 text-base font-normal text-gray-500">使用本平台 Docker 容器化部署，国内秒开，朋友圈刷屏。</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="hideUploadModal()"></div>
+
+            <!-- Modal panel -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">提交作战成果</h3>
+                            <div class="mt-2">
+                                <form id="uploadForm" class="space-y-4">
+                                    <!-- Project Name -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">项目 ID (Slug)</label>
+                                        <div class="flex">
+                                            <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                                works/
+                                            </span>
+                                            <input type="text" name="projectName" required pattern="[\w\-]+" placeholder="my-project"
+                                                class="flex-1 min-w-0 block w-full px-3 py-2 rounded-r-md border border-gray-300 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Author & Desc -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">代号 (作者)</label>
+                                        <input type="text" name="author" placeholder="你的名字或昵称"
+                                            class="block w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">项目简介</label>
+                                        <textarea name="description" rows="2" placeholder="一句话介绍你的产品"
+                                            class="block w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"></textarea>
+                                    </div>
+
+                                    <!-- Token -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">访问令牌 (Token)</label>
+                                        <input type="password" name="token" required placeholder="特战营专属口令"
+                                            class="block w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-black focus:border-black sm:text-sm">
+                                    </div>
+
+                                    <!-- File -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">文件 (.zip 或 .html)</label>
+                                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 cursor-pointer relative">
+                                            <input id="file-upload" name="file" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".zip,.html,.htm" required>
+                                            <div class="space-y-1 text-center pointer-events-none">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                                <p class="text-sm text-gray-600" id="fileName">点击或拖拽上传</p>
+                                                <p class="text-xs text-gray-500">支持 .zip (多文件) 或 .html (单文件)</p>
+                                                <p class="text-xs text-emerald-600 mt-1">✨ 系统已自动修复中文乱码，请放心上传</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" id="submitBtn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none transition-all">
+                                        立即发布
+                                    </button>
+                                </form>
+                                <div id="statusMessage" class="mt-4 hidden p-3 rounded text-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="hideUploadModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-auto py-6 text-center text-xs text-gray-400 border-t border-gray-200">
+        &copy; 2026 枫哥 AI 编程特战营. Powered by OPC.
+    </div>
+
+    <script>
+        // UI Logic
+        function switchTab(tab) {
+            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-' + tab).classList.remove('hidden');
+            
+            document.querySelectorAll('[id^="tab-"]').forEach(el => {
+                el.classList.remove('tab-active');
+                el.classList.add('tab-inactive');
+            });
+            document.getElementById('tab-' + tab).classList.add('tab-active');
+            document.getElementById('tab-' + tab).classList.remove('tab-inactive');
+        }
+
+        function showUploadModal() {
+            document.getElementById('uploadModal').classList.remove('hidden');
+        }
+
+        function hideUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+        }
+
+        // File Input Display
+        document.getElementById('file-upload').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                document.getElementById('fileName').textContent = e.target.files[0].name;
+                document.getElementById('fileName').classList.add('text-black', 'font-medium');
+            }
+        });
+
+        // Fetch Projects
+        async function fetchProjects() {
+            try {
+                // Use absolute path /api/ to avoid issues with trailing slashes (e.g. /upload vs /upload/)
+                const res = await fetch('/api/projects');
+                const projects = await res.json();
+                const grid = document.getElementById('projectGrid');
+                
+                if (projects.length === 0) {
+                    grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400">暂无作品，快来抢占沙发！</div>';
+                    return;
+                }
+
+                grid.innerHTML = projects.map(p => `
+                    <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow border border-gray-100 flex flex-col h-full">
+                        <div class="p-5 flex-1">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-shrink-0">
+                                    <div class="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg">
+                                        ${p.name.charAt(0).toUpperCase()}
+                                    </div>
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <h3 class="text-lg font-medium text-gray-900 truncate" title="${p.name}">${p.name}</h3>
+                                    <p class="text-sm text-gray-500">by ${p.author || '匿名'}</p>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <p class="text-sm text-gray-500 line-clamp-3 h-16">${p.description || '这个战友很懒，什么都没写。'}</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-5 py-3 flex justify-between items-center">
+                            <a href="${p.url}" target="_blank" class="text-sm font-medium text-emerald-600 hover:text-emerald-500 flex items-center">
+                                查看作品 <span aria-hidden="true" class="ml-1">&rarr;</span>
+                            </a>
+                            <button onclick="deleteProject('${p.id}')" class="text-xs text-gray-400 hover:text-red-600 transition-colors" title="删除作品">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function deleteProject(id) {
+            const token = prompt('请输入访问令牌 (Token) 以确认删除:');
+            if (!token) return;
+
+            if (!confirm('确定要删除这个作品吗？此操作不可恢复。')) return;
+
+            try {
+                const res = await fetch(`/api/projects/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert('删除成功');
+                    fetchProjects();
+                } else {
+                    alert('删除失败: ' + data.error);
+                }
+            } catch (err) {
+                alert('删除出错: ' + err.message);
+            }
+        }
+
+        // Init
+        fetchProjects();
+
+        // Form Submit
+        const form = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusDiv = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            submitBtn.disabled = true;
+            submitBtn.textContent = '部署中...';
+            statusDiv.classList.add('hidden');
+            statusDiv.className = 'mt-4 hidden p-3 rounded text-sm';
+
+            try {
+                const response = await fetch('/api/upload', { method: 'POST', body: formData });
+                const result = await response.json();
+
+                statusDiv.classList.remove('hidden');
+                if (response.ok) {
+                    statusDiv.classList.add('bg-green-50', 'text-green-800');
+                    statusDiv.innerHTML = `<strong>发布成功！</strong> <a href="${result.url}" target="_blank" class="underline">点击访问</a>`;
+                    form.reset();
+                    document.getElementById('fileName').textContent = '点击或拖拽上传';
+                    fetchProjects(); // Refresh list
+                    setTimeout(() => {
+                        hideUploadModal();
+                        statusDiv.classList.add('hidden');
+                    }, 3000);
+                } else {
+                    throw new Error(result.error || '上传失败');
+                }
+            } catch (error) {
+                statusDiv.classList.remove('hidden');
+                statusDiv.classList.add('bg-red-50', 'text-red-800');
+                statusDiv.textContent = error.message;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '立即发布';
+            }
+        });
+    </script>
+</body>
+</html>

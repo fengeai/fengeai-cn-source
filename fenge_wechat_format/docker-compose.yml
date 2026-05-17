@@ -1,0 +1,14 @@
+services:
+  wechat:
+    build: .
+    container_name: fenge_wechat
+    restart: always
+    environment:
+      - PORT=3010
+    networks:
+      - fenge_net
+
+networks:
+  fenge_net:
+    external: true
+    name: fenge_upload_service_fenge_net

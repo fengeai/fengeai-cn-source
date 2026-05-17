@@ -1,0 +1,13 @@
+{
+  "name": "fenge-wechat-format",
+  "version": "0.1.0",
+  "description": "Fenge WeChat article formatting assistant",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

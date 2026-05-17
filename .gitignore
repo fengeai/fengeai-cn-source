@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Runtime data and uploads
+data/
+temp_uploads/
+*.zip
+
+# Secrets and certificates
+.env
+.env.*
+!.env.example
+certs/
+*.pem
+*.key
+
+# Backups and generated local noise
+*.bak
+*.bak*
+backups/
+dist.bak*/
+
+# OS/editor files
+.DS_Store
+Thumbs.db

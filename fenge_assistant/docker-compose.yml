@@ -1,0 +1,19 @@
+services:
+  assistant:
+    build: .
+    container_name: fenge_assistant
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - PORT=3020
+      - ASSISTANT_PUBLIC_ACCESS=true
+      - ASSISTANT_RATE_LIMIT_PER_MINUTE=6
+      - ASSISTANT_RATE_LIMIT_PER_DAY=80
+    networks:
+      - fenge_net
+
+networks:
+  fenge_net:
+    external: true
+    name: fenge_upload_service_fenge_net

@@ -1,0 +1,11 @@
+node_modules
+apps/*/node_modules
+apps/web/.next
+apps/api/dist
+apps/api/dev.db
+apps/api/.env
+.playwright-cli
+*.log
+*.zip
+*.tar
+*.tar.gz

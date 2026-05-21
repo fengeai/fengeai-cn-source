@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Topic {
+  id          String    @id @default(cuid())
+  title       String
+  summary     String
+  audience    String
+  angle       String
+  keywordsCsv String
+  status      String    @default("draft")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  articles    Article[]
+}
+
+model Article {
+  id           String           @id @default(cuid())
+  topicId      String
+  title        String
+  status       String           @default("draft")
+  outlineText  String
+  hook         String
+  promise      String
+  keyPointsText String
+  callToAction String
+  content      String
+  referenceInsights String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  topic        Topic            @relation(fields: [topicId], references: [id])
+  variants     ArticleVariant[]
+}
+
+model ArticleVariant {
+  id        String   @id @default(cuid())
+  articleId String
+  platform  String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}

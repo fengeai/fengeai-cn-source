@@ -1,10 +1,10 @@
-services:
+﻿services:
   content-factory-api:
     build:
       context: .
       args:
         NEXT_PUBLIC_BASE_PATH: /assistant
-        NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant/api
+        NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant
     container_name: content_factory_api
     env_file:
       - ./apps/api/.env
@@ -23,11 +23,11 @@ services:
       context: .
       args:
         NEXT_PUBLIC_BASE_PATH: /assistant
-        NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant/api
+        NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant
     container_name: content_factory_web
     environment:
       NEXT_PUBLIC_BASE_PATH: /assistant
-      NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant/api
+      NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant
     command: npm --workspace @content-assistant/web run start
     depends_on:
       - content-factory-api

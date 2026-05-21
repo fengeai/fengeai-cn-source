@@ -1,5 +1,5 @@
 import type { Article, HotSearchResult } from '@content-assistant/shared';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   createTopic,
   generateArticle,
@@ -222,6 +222,63 @@ function getProgressIndex(stage: CreationStage, article: Article | null) {
   return -1;
 }
 
+function getStageHint(stage: CreationStage, message: string, elapsedSeconds: number): string {
+  if (stage === 'working') {
+    return `正在搜索热点素材，通常 3-15 秒（已用 ${elapsedSeconds} 秒）。`;
+  }
+
+  if (stage === 'reviewing') {
+    return '热点搜索已完成，请确认最多 3 条参考后继续提炼观点。';
+  }
+
+  if (stage === 'insighting') {
+    if (message.includes('修改观点')) {
+      return `AI 正在按你的意见修改观点，通常 20-120 秒（已用 ${elapsedSeconds} 秒）。`;
+    }
+    return `AI 正在提炼观点，通常 20-120 秒（已用 ${elapsedSeconds} 秒）。`;
+  }
+
+  if (stage === 'confirmingInsight') {
+    return '观点已生成，请确认、继续修改，或直接生成正文。';
+  }
+
+  if (stage === 'generating') {
+    return `AI 正在生成正文，通常 30-180 秒（已用 ${elapsedSeconds} 秒）。`;
+  }
+
+  if (stage === 'ready') {
+    return '草稿已保存，可以打开草稿继续编辑或去排版。';
+  }
+
+  if (stage === 'error') {
+    return '当前阶段遇到问题，请重试。';
+  }
+
+  return '输入一个方向后开始创作。';
+}
+
+function getDynamicProgress(stage: CreationStage, article: Article | null, elapsedSeconds: number): number {
+  if (article || stage === 'ready') return 100;
+  if (stage === 'idle') return 0;
+  if (stage === 'reviewing') return 30;
+  if (stage === 'confirmingInsight') return 78;
+  if (stage === 'error') return 15;
+
+  if (stage === 'working') {
+    return Math.min(25, 8 + elapsedSeconds * 2);
+  }
+
+  if (stage === 'insighting') {
+    return Math.min(70, 35 + Math.log2(elapsedSeconds + 1) * 8);
+  }
+
+  if (stage === 'generating') {
+    return Math.min(95, 80 + Math.log2(elapsedSeconds + 1) * 5);
+  }
+
+  return 0;
+}
+
 export default function Home() {
   const [direction, setDirection] = useState('');
   const [article, setArticle] = useState<Article | null>(null);
@@ -232,12 +289,30 @@ export default function Home() {
   const [pendingTopicId, setPendingTopicId] = useState<string | null>(null);
   const [referenceInsights, setReferenceInsights] = useState('');
   const [insightInstruction, setInsightInstruction] = useState('');
+  const [stageStartedAt, setStageStartedAt] = useState(() => Date.now());
+  const [nowTick, setNowTick] = useState(() => Date.now());
 
   const creationInput = useMemo(
     () => (direction.trim() ? buildCreationInput(direction, hotResults) : null),
     [direction, hotResults],
   );
   const publishVariant = getPublishVariant(article);
+
+  useEffect(() => {
+    setStageStartedAt(Date.now());
+  }, [stage]);
+
+  useEffect(() => {
+    if (stage !== 'working' && stage !== 'insighting' && stage !== 'generating') {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setNowTick(Date.now());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [stage]);
 
   async function handleStartCreation() {
     if (!creationInput) {
@@ -314,7 +389,7 @@ export default function Home() {
       setPendingTopicId(null);
       setReferenceInsights('');
       setStage('reviewing');
-      setMessage(getErrorMessage(error));
+      setMessage(`提炼观点失败：${getErrorMessage(error)}。可直接重试。`);
     }
   }
 
@@ -335,7 +410,7 @@ export default function Home() {
       setMessage('新的观点已提炼，请确认。');
     } catch (error) {
       setStage('confirmingInsight');
-      setMessage(getErrorMessage(error));
+      setMessage(`修改观点失败：${getErrorMessage(error)}。可重试。`);
     }
   }
 
@@ -387,7 +462,7 @@ export default function Home() {
     } catch (error) {
       setArticle(null);
       setStage('confirmingInsight');
-      setMessage(getErrorMessage(error));
+      setMessage(`生成正文失败：${getErrorMessage(error)}。可重试。`);
     }
   }
 
@@ -396,9 +471,9 @@ export default function Home() {
   }
 
   const progressIndex = getProgressIndex(stage, article);
-  const progressPercent = progressIndex < 0
-    ? 0
-    : Math.round(((progressIndex + 1) / progressSteps.length) * 100);
+  const elapsedSeconds = Math.max(0, Math.floor((nowTick - stageStartedAt) / 1000));
+  const progressPercent = Math.round(getDynamicProgress(stage, article, elapsedSeconds));
+  const stageHint = getStageHint(stage, message, elapsedSeconds);
 
   return (
     <main style={pageStyle}>
@@ -505,6 +580,9 @@ export default function Home() {
             <strong style={{ fontSize: 15 }}>创作进度</strong>
             <span style={{ color: '#667085', fontSize: 13 }}>{progressPercent}%</span>
           </div>
+          <p style={{ margin: '8px 0 0', color: '#475467', fontSize: 13, lineHeight: 1.6 }}>
+            {stageHint}
+          </p>
           <div
             style={{
               height: 8,
@@ -520,7 +598,7 @@ export default function Home() {
                 height: '100%',
                 background: '#167c5c',
                 borderRadius: 999,
-                transition: 'width 0.25s ease',
+                transition: 'width 0.6s ease',
               }}
             />
           </div>

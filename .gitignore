@@ -5,6 +5,8 @@ node_modules/
 data/
 temp_uploads/
 *.zip
+*.tar.gz
+*.before-restore-*
 
 # Secrets and certificates
 .env

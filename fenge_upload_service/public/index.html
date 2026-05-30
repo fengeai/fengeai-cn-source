@@ -3,217 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>枫哥AI进化社 - 为内容创作者打造的 AI 进化平台</title>
-  <meta name="description" content="枫哥AI进化社，为内容创作者打造 AI 工具、公众号排版、学员作品展示和 AI 编程特战营。">
+  <title>枫哥AI进化社 - 给自媒体人的 AI 内容生产工作台</title>
+  <meta name="description" content="枫哥AI进化社，为自媒体人打造 AI 内容生产工作台，从找选题、写初稿、公众号排版，到封面提示词和发布检查。">
   <link rel="stylesheet" href="/home.css">
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="/">
+    <a class="brand" href="/" aria-label="枫哥AI进化社">
       <img src="/fenge-ai-evolution-logo.png" alt="枫哥AI进化社">
     </a>
     <nav class="nav-links" aria-label="主导航">
       <a href="/">首页</a>
-      <a href="#tools">AI工具</a>
-      <a href="#works">学员作品</a>
-      <a href="#pricing">收费产品</a>
+      <a href="/assistant/">内容工厂</a>
+      <a href="/wechat/">公众号排版</a>
+      <a href="/toolbox/">AI工具精选</a>
+      <a href="/upload">学员作品</a>
       <a href="#about">关于枫哥</a>
     </nav>
-    <a class="header-cta" href="/wechat/">立即体验</a>
+    <a class="header-cta" href="/assistant/">开始创作</a>
   </header>
 
   <main>
     <section class="hero">
-      <div class="hero-bg"></div>
-      <div class="hero-content">
-        <div class="hero-copy">
-          <p class="eyebrow">为内容创作者打造的 AI 进化平台</p>
-          <h1>把写作、排版、配图、发布，变成一条高效的 <em>AI</em> 工作流</h1>
-          <p class="hero-subtitle">枫哥AI进化社聚合实用 AI 工具、特战营学员作品和内容创作方法，帮助创作者把想法更快变成文章、作品和产品。</p>
-          <div class="hero-actions">
-            <a class="btn primary" href="/wechat/">开始使用工具</a>
-            <a class="btn secondary" href="#works">查看学员作品</a>
-          </div>
-          <div class="trust-row">
-            <span>实用好用</span>
-            <span>持续更新</span>
-            <span>面向创作者</span>
-            <span>国内可访问</span>
+      <div class="hero-copy">
+        <p class="eyebrow">枫哥AI进化社</p>
+        <h1>给自媒体人的 AI 内容生产工作台</h1>
+        <p class="hero-subtitle">从找选题、写初稿、公众号排版，到封面提示词和发布检查，一站跑通，把 AI 从聊天工具变成内容助手。</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="/assistant/">开始生成文章</a>
+          <a class="btn secondary" href="/wechat/">试试公众号排版</a>
+        </div>
+        <div class="audience-tags" aria-label="适合人群">
+          <span>公众号作者</span>
+          <span>小红书博主</span>
+          <span>AI 新手</span>
+          <span>自媒体副业人</span>
+        </div>
+      </div>
+
+      <div class="workbench-card" aria-label="内容生产工作台预览">
+        <div class="window-dots"><span></span><span></span><span></span></div>
+        <div class="task-card">
+          <div class="logo-chip">枫</div>
+          <div>
+            <strong>今日任务</strong>
+            <p>10 分钟完成一篇公众号初稿</p>
           </div>
         </div>
-
-        <div class="hero-panel" aria-label="工具站预览">
-          <div class="panel-top">
-            <div>
-              <strong>创作者工作台</strong>
-            </div>
-            <span class="status">在线</span>
-          </div>
-          <div class="metric-grid feature-grid">
-            <div><b>公众号排版</b><span>一键排版，快速美化</span></div>
-            <div><b>学员作品</b><span>优秀作品精选展示</span></div>
-            <div><b>创作工具</b><span>多种工具随取随用</span></div>
-          </div>
-          <p class="panel-label">创作工作流</p>
-          <div class="workflow">
-            <span>选题</span>
-            <i></i>
-            <span>写作</span>
-            <i></i>
-            <span>排版</span>
-            <i></i>
-            <span>发布</span>
-          </div>
-          <div class="progress-block">
-            <div class="progress-meta">
-              <span>今日进度</span>
-              <strong>75%</strong>
-              <span>已完成 3 / 4</span>
-            </div>
-            <div class="progress-line"><span></span></div>
-          </div>
+        <div class="task-grid">
+          <div><i>?</i><strong>找选题</strong></div>
+          <div><i>✍</i><strong>写初稿</strong></div>
+          <div><i>▣</i><strong>排版</strong></div>
+          <div><i>□</i><strong>封面</strong></div>
+        </div>
+        <div class="result-card">
+          <strong>输出结果</strong>
+          <p>标题、大纲、正文、金句、封面提示词、发布检查清单</p>
         </div>
       </div>
     </section>
 
-    <section id="tools" class="section tools-section">
-      <div class="section-head">
-        <p class="section-kicker">AI Tools</p>
-        <h2>先从真正能用的 AI 工具开始</h2>
-        <p>不堆概念，先把内容创作者每天都会用到的动作做顺。</p>
-      </div>
-      <div class="tool-grid">
-        <article class="tool-card active">
-          <div class="icon green">排</div>
-          <div>
-            <span class="badge live">推荐</span>
-            <h3>公众号一键排版助手</h3>
-            <p>粘贴文章，一键生成公众号排版、封面提示词和正文配图建议。</p>
-            <a href="/wechat/">立即使用</a>
-          </div>
-        </article>
-        <article class="tool-card active">
-          <div class="icon blue">创</div>
-          <div>
-            <span class="badge live">新上线</span>
-            <h3>个人AI创作助手</h3>
-            <p>配置你的档案、记忆和模型，让 AI 长期陪你完成选题、写作和优化。</p>
-            <a href="/assistant/">立即使用</a>
-          </div>
-        </article>
-        <article class="tool-card active">
-          <div class="icon gold">图</div>
-          <div>
-            <span class="badge live">新上线</span>
-            <h3>图片编辑工具</h3>
-            <p>上传图片，快速完成裁剪、调色、加字和导出，适合公众号首图、海报和视频封面。</p>
-            <a href="/image-editor/">立即使用</a>
-          </div>
-        </article>
-        <article class="tool-card">
-          <div class="icon blue">题</div>
-          <div>
-            <span class="badge">规划中</span>
-            <h3>爆文标题生成器</h3>
-            <p>围绕人群、痛点和观点，生成更适合传播的标题候选。</p>
-            <a href="#pricing">查看计划</a>
-          </div>
-        </article>
-        <article class="tool-card">
-          <div class="icon cyan">图</div>
-          <div>
-            <span class="badge">规划中</span>
-            <h3>内容配图建议器</h3>
-            <p>自动判断文章哪里该配图，给出图片类型和提示词。</p>
-            <a href="#pricing">查看计划</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="works" class="section split-section">
-      <div class="story-card dark-card">
-        <p class="section-kicker">Bootcamp Works</p>
-        <h2>AI 编程特战营</h2>
-        <p>普通人也能用 AI 做出自己的第一个网页、小工具和自动化应用。这里保留学员从 0 到 1 的真实成果。</p>
-        <div class="inline-actions">
-          <a class="btn primary" href="/upload">查看作品</a>
-          <a class="btn ghost" href="/upload">提交作品</a>
-        </div>
-      </div>
-      <div class="work-list">
-        <div class="work-item">
-          <span>01</span>
-          <div>
-            <h3>网页作品</h3>
-            <p>个人主页、工具页、活动页、课程页。</p>
-          </div>
-        </div>
-        <div class="work-item">
-          <span>02</span>
-          <div>
-            <h3>AI 小工具</h3>
-            <p>围绕真实任务做出来的轻量应用。</p>
-          </div>
-        </div>
-        <div class="work-item">
-          <span>03</span>
-          <div>
-            <h3>自动化工作流</h3>
-            <p>把重复动作交给 AI，把经验沉淀成系统。</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="pricing" class="section pricing-section">
-      <div class="section-head">
-        <p class="section-kicker">Products</p>
-        <h2>工具、课程和服务会逐步开放</h2>
-        <p>先把免费工具做好，再逐步加入创作者 Pro、训练营和企业内训。</p>
-      </div>
-      <div class="pricing-grid">
-        <article>
-          <span>Free</span>
-          <h3>免费工具</h3>
-          <p>公众号排版助手、作品展示和基础创作工具。</p>
-          <b>当前可用</b>
-        </article>
-        <article class="featured">
-          <span>Bootcamp</span>
-          <h3>AI 编程特战营</h3>
-          <p>用 10 天跑通 AI 编程、网页上线和个人作品发布。</p>
-          <b>持续迭代</b>
-        </article>
-        <article>
-          <span>Pro</span>
-          <h3>创作者 Pro</h3>
-          <p>更多模板、历史记录、批量处理和专属工作流。</p>
-          <b>即将开放</b>
-        </article>
-      </div>
-    </section>
-
-    <section id="about" class="section about-section">
-      <div>
-        <p class="section-kicker">About</p>
-        <h2>关于枫哥AI进化社</h2>
-        <p>这里不是一个工具堆放站，而是内容创作者的 AI 实战基地。我们相信 AI 的价值不在于炫技，而在于把经验变成能复用、能交付、能帮助人的系统。</p>
-      </div>
-      <blockquote><span>“</span>工具是手段，内容才是核心。用好 AI，让创作更自由，影响力更长久。<i>”</i></blockquote>
+    <section id="about" class="about">
+      <h2>把内容创作变成一条稳定流水线</h2>
+      <p>先跑通最小闭环，再逐步升级工具和流程。内容工厂负责把重复动作交给 AI，人负责判断、经验和表达。</p>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="footer-brand">
-      <img src="/fenge-ai-evolution-logo.png" alt="枫哥AI进化社">
-      <p>为内容创作者打造的 AI 进化平台</p>
-    </div>
-    <div class="footer-links">
-      <a href="/wechat/">公众号排版</a>
-      <a href="/upload">提交作品</a>
-      <a href="/upload">学员作品</a>
-    </div>
-  </footer>
+  <script src="/analytics.js"></script>
 </body>
 </html>

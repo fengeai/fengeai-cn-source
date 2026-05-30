@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { analyze, renderArticle, extractTitle } = require('./server');
+const { analyze, renderArticle, extractTitle, buildDraftChecklist } = require('./server');
 
 const markdown = `# 测试标题
 
@@ -25,5 +25,19 @@ const result = renderArticle(markdown, 'fenge');
 assert.ok(result.html.includes('枫哥爆文排版模板'));
 assert.ok(result.html.includes('测试标题'));
 assert.ok(result.html.includes('blockquote'));
+
+const draftCheck = buildDraftChecklist({
+  markdown,
+  html: result.html,
+  appId: 'wx_test',
+  appSecret: 'secret',
+  thumbMediaId: 'media_test'
+});
+assert.equal(draftCheck.ready, true);
+assert.equal(draftCheck.title, '测试标题');
+
+const missingDraftCheck = buildDraftChecklist({ markdown });
+assert.equal(missingDraftCheck.ready, false);
+assert.ok(missingDraftCheck.issues.some(item => item.includes('AppID')));
 
 console.log('All tests passed');

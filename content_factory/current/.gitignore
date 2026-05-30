@@ -1,0 +1,7 @@
+.env
+apps/api/.env
+apps/web/.env.local
+node_modules/
+.next/
+dev.db
+*.db

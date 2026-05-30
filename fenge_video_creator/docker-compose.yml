@@ -1,0 +1,24 @@
+services:
+  video-creator:
+    build: .
+    container_name: fenge_video_creator
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: 3030
+      VIDEO_PUBLIC_BASE_URL: https://fengeai.cn
+    volumes:
+      - video_creator_uploads:/app/storage/uploads
+      - video_creator_data:/app/storage/data
+    networks:
+      - fenge_net
+
+volumes:
+  video_creator_uploads:
+  video_creator_data:
+
+networks:
+  fenge_net:
+    external: true
+    name: fenge_upload_service_fenge_net

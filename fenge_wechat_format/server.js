@@ -128,6 +128,48 @@ function detectMedia(markdown) {
   return media.slice(0, 8);
 }
 
+function buildDraftChecklist(input = {}) {
+  const markdown = String(input.markdown || '').trim();
+  const html = String(input.html || '').trim();
+  const appId = String(input.appId || '').trim();
+  const appSecret = String(input.appSecret || '').trim();
+  const thumbMediaId = String(input.thumbMediaId || '').trim();
+  const info = markdown ? analyze(markdown) : { media: [], title: '' };
+  const issues = [];
+  const warnings = [];
+
+  if (!markdown && !html) issues.push('请先粘贴文章并完成排版。');
+  if (!appId) issues.push('缺少公众号 AppID。');
+  if (!appSecret) issues.push('缺少公众号 AppSecret。');
+  if (!thumbMediaId) issues.push('缺少封面素材 media_id，微信草稿箱接口要求必须填写。');
+
+  const media = info.media || [];
+  const gifs = media.filter(item => item.type === 'GIF 动图');
+  if (media.length) {
+    warnings.push(`文章中识别到 ${media.length} 个图片/GIF，建议先确认这些素材在公众号后台能稳定显示。`);
+  }
+  if (gifs.length) {
+    warnings.push(`文章中有 ${gifs.length} 个 GIF，建议优先上传到公众号素材库或可靠图床后再推送草稿。`);
+  }
+  if (stripMarkdown(markdown).length > 20000) {
+    warnings.push('文章较长，推送前建议先复制到公众号后台预览一次。');
+  }
+
+  return {
+    ready: issues.length === 0,
+    title: info.title || extractTitle(markdown || '未命名文章'),
+    issues,
+    warnings,
+    media,
+    steps: [
+      '确认正文排版预览无错位。',
+      '封面图先上传公众号素材库，复制 thumb_media_id 到本页。',
+      '正文图片和 GIF 先确认来源稳定，重要素材建议入库。',
+      '点击推送草稿箱后，到公众号后台做最终手机预览。'
+    ]
+  };
+}
+
 function recommendImageSlots(markdown, title, media) {
   const headings = markdown
     .split(/\r?\n/)
@@ -399,6 +441,16 @@ async function handleFormat(req, res) {
   sendJson(res, 200, result);
 }
 
+async function handleDraftCheck(req, res) {
+  let body;
+  try {
+    body = JSON.parse(await readBody(req) || '{}');
+  } catch {
+    return sendJson(res, 400, { error: '请求 JSON 格式不正确' });
+  }
+  sendJson(res, 200, buildDraftChecklist(body));
+}
+
 async function handleDraft(req, res) {
   let body;
   try {
@@ -407,8 +459,8 @@ async function handleDraft(req, res) {
     return sendJson(res, 400, { error: '请求 JSON 格式不正确' });
   }
   const { appId, appSecret, markdown, html, theme, author, digest, thumbMediaId, contentSourceUrl } = body;
-  if (!appId || !appSecret) return sendJson(res, 400, { error: '请填写 AppID 和 AppSecret' });
-  if (!thumbMediaId) return sendJson(res, 400, { error: '请填写封面素材 media_id。公众号草稿箱接口要求封面图素材。' });
+  const checklist = buildDraftChecklist(body);
+  if (!checklist.ready) return sendJson(res, 400, { error: checklist.issues.join('；'), checklist });
   const articleHtml = html || renderArticle(String(markdown || ''), theme || 'fenge').html;
   const title = extractTitle(String(markdown || '未命名文章'));
   const token = await getWechatToken(appId, appSecret);
@@ -457,8 +509,10 @@ const server = http.createServer(async (req, res) => {
     const pathname = url.pathname;
     if (req.method === 'GET' && pathname === '/health') return sendJson(res, 200, { ok: true });
     if (req.method === 'POST' && pathname === '/api/format') return await handleFormat(req, res);
+    if (req.method === 'POST' && pathname === '/api/draft-check') return await handleDraftCheck(req, res);
     if (req.method === 'POST' && pathname === '/api/draft') return await handleDraft(req, res);
     if (req.method === 'POST' && pathname === `${BASE_PATH}/api/format`) return await handleFormat(req, res);
+    if (req.method === 'POST' && pathname === `${BASE_PATH}/api/draft-check`) return await handleDraftCheck(req, res);
     if (req.method === 'POST' && pathname === `${BASE_PATH}/api/draft`) return await handleDraft(req, res);
     if ((req.method === 'GET' || req.method === 'HEAD') && (pathname === BASE_PATH || pathname.startsWith(`${BASE_PATH}/`))) return serveStatic(req, res);
     sendText(res, 404, 'Not found');
@@ -475,4 +529,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { analyze, renderArticle, extractTitle, server };
+module.exports = { analyze, renderArticle, extractTitle, buildDraftChecklist, server };

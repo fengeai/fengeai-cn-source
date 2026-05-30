@@ -1,0 +1,13 @@
+{
+  "name": "fenge-video-creator",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node api/server.js",
+    "start": "node api/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

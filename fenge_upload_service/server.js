@@ -59,11 +59,20 @@ if (!ACCESS_TOKEN) {
   throw new Error('ACCESS_TOKEN is required');
 } // 简单的鉴权 Token
 
+app.set('trust proxy', true);
+
 // 允许跨域
 app.use(cors());
 app.use(express.json()); // 解析 JSON body
 app.use(express.urlencoded({ extended: true })); // 解析 URL-encoded body
-app.use(express.static('public')); // 托管前端页面
+app.use(express.static('public', {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    }
+  },
+})); // 托管前端页面
 app.use('/works', express.static(path.join(__dirname, 'data/student_works'))); // 托管作品目录，使其可直接访问
 
 // 兼容 /upload 路径，直接返回学员作品上传/展示页
@@ -74,6 +83,10 @@ app.get(['/upload', '/upload/'], (req, res) => {
 // 独立图片编辑工具页
 app.get(['/image-editor', '/image-editor/'], (req, res) => {
     res.sendFile(path.join(__dirname, 'public/image-editor.html'));
+});
+
+app.get(['/visits', '/visits/'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/visits.html'));
 });
 
 // 配置上传存储
@@ -95,6 +108,114 @@ fs.ensureFileSync(DB_FILE);
 if (!fs.existsSync(DB_FILE) || fs.readFileSync(DB_FILE).length === 0) {
   fs.writeJsonSync(DB_FILE, []);
 }
+
+const VISITS_FILE = path.join(__dirname, 'data', 'visits.jsonl');
+fs.ensureFileSync(VISITS_FILE);
+
+function cleanText(value, maxLength = 240) {
+  return String(value || '')
+    .replace(/[\r\n\t]/g, ' ')
+    .trim()
+    .slice(0, maxLength);
+}
+
+function getClientIp(req) {
+  return cleanText(req.headers['x-forwarded-for']?.split(',')[0] || req.ip || req.socket.remoteAddress || 'unknown', 80);
+}
+
+function getVisitorId(req) {
+  const raw = cleanText(req.body?.visitorId, 80);
+  return /^[a-zA-Z0-9_-]{8,80}$/.test(raw) ? raw : '';
+}
+
+function readVisitEvents(days = 7) {
+  const since = Date.now() - Math.max(1, Math.min(days, 90)) * 24 * 60 * 60 * 1000;
+  const content = fs.readFileSync(VISITS_FILE, 'utf8');
+
+  return content
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        return null;
+      }
+    })
+    .filter((event) => event && new Date(event.at).getTime() >= since);
+}
+
+function summarizeVisits(events) {
+  const visitors = new Set();
+  const ips = new Set();
+  const byDay = {};
+  const byPath = {};
+
+  for (const event of events) {
+    const day = String(event.at || '').slice(0, 10);
+    const visitorKey = event.visitorId || event.ip;
+    if (visitorKey) visitors.add(visitorKey);
+    if (event.ip) ips.add(event.ip);
+
+    byDay[day] = byDay[day] || { date: day, views: 0, visitors: new Set() };
+    byDay[day].views += 1;
+    if (visitorKey) byDay[day].visitors.add(visitorKey);
+
+    const page = event.path || '/';
+    byPath[page] = byPath[page] || { path: page, views: 0, visitors: new Set() };
+    byPath[page].views += 1;
+    if (visitorKey) byPath[page].visitors.add(visitorKey);
+  }
+
+  return {
+    pageviews: events.length,
+    uniqueVisitors: visitors.size,
+    uniqueIps: ips.size,
+    byDay: Object.values(byDay)
+      .map((item) => ({ date: item.date, views: item.views, visitors: item.visitors.size }))
+      .sort((a, b) => a.date.localeCompare(b.date)),
+    topPages: Object.values(byPath)
+      .map((item) => ({ path: item.path, views: item.views, visitors: item.visitors.size }))
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 20),
+    recent: events.slice(-50).reverse(),
+  };
+}
+
+app.post('/api/track', async (req, res) => {
+  const event = {
+    at: new Date().toISOString(),
+    visitorId: getVisitorId(req),
+    ip: getClientIp(req),
+    method: req.method,
+    path: cleanText(req.body?.path || req.headers.referer || '/', 300),
+    title: cleanText(req.body?.title, 160),
+    referrer: cleanText(req.body?.referrer, 300),
+    userAgent: cleanText(req.headers['user-agent'], 300),
+  };
+
+  try {
+    await fs.appendFile(VISITS_FILE, JSON.stringify(event) + '\n', 'utf8');
+    res.status(204).end();
+  } catch (err) {
+    console.error('Track visit failed:', err);
+    res.status(500).json({ error: 'Track visit failed' });
+  }
+});
+
+app.get('/api/visits/summary', (req, res) => {
+  if (req.query.token !== ACCESS_TOKEN) {
+    return res.status(403).json({ error: 'Invalid Access Token' });
+  }
+
+  const days = Number(req.query.days || 7);
+  const events = readVisitEvents(days);
+  res.json({
+    days: Math.max(1, Math.min(days, 90)),
+    generatedAt: new Date().toISOString(),
+    ...summarizeVisits(events),
+  });
+});
 
 // 获取项目列表
 app.get('/api/projects', async (req, res) => {

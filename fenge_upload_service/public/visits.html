@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网站访问情况</title>
+  <style>
+    body { margin: 0; background: #f7f7f4; color: #172033; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    main { max-width: 1080px; margin: 0 auto; padding: 28px 18px 42px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+    h1 { margin: 0; font-size: 32px; }
+    .panel, .metric, table { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; }
+    .panel { padding: 18px; margin-bottom: 16px; }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+    input, select, button { border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; font-size: 15px; }
+    button { border: none; background: #167c5c; color: #fff; cursor: pointer; font-weight: 700; }
+    .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .metric { padding: 18px; }
+    .metric span { color: #667085; font-size: 14px; }
+    .metric strong { display: block; margin-top: 8px; font-size: 34px; }
+    table { width: 100%; border-collapse: collapse; overflow: hidden; margin-bottom: 16px; }
+    th, td { border-bottom: 1px solid #edf0f2; padding: 12px; text-align: left; vertical-align: top; font-size: 14px; }
+    th { color: #475467; background: #fafafa; }
+    .muted { color: #667085; }
+    @media (max-width: 720px) { header, .metrics { display: block; } .metric { margin-bottom: 10px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>网站访问情况</h1>
+        <p class="muted">匿名统计页面访问、独立访客、热门路径和最近访问。</p>
+      </div>
+      <a href="/" class="muted">返回首页</a>
+    </header>
+
+    <section class="panel">
+      <div class="controls">
+        <input id="tokenInput" type="password" placeholder="输入管理访问 Token">
+        <select id="daysInput">
+          <option value="1">最近 1 天</option>
+          <option value="7" selected>最近 7 天</option>
+          <option value="30">最近 30 天</option>
+          <option value="90">最近 90 天</option>
+        </select>
+        <button id="loadBtn">查看数据</button>
+      </div>
+      <p id="message" class="muted"></p>
+    </section>
+
+    <section class="metrics">
+      <div class="metric"><span>页面访问量</span><strong id="pageviews">-</strong></div>
+      <div class="metric"><span>独立访客</span><strong id="visitors">-</strong></div>
+      <div class="metric"><span>独立 IP</span><strong id="ips">-</strong></div>
+    </section>
+
+    <section class="panel">
+      <h2>热门页面</h2>
+      <table>
+        <thead><tr><th>路径</th><th>访问</th><th>访客</th></tr></thead>
+        <tbody id="topPages"></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>按天统计</h2>
+      <table>
+        <thead><tr><th>日期</th><th>访问</th><th>访客</th></tr></thead>
+        <tbody id="byDay"></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>最近访问</h2>
+      <table>
+        <thead><tr><th>时间</th><th>路径</th><th>访客</th><th>IP</th></tr></thead>
+        <tbody id="recent"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/analytics.js"></script>
+  <script>
+    const tokenInput = document.getElementById('tokenInput');
+    const daysInput = document.getElementById('daysInput');
+    const message = document.getElementById('message');
+
+    tokenInput.value = localStorage.getItem('fenge_visits_token') || '';
+
+    function rows(items, render) {
+      return items.length ? items.map(render).join('') : '<tr><td colspan="4" class="muted">暂无数据</td></tr>';
+    }
+
+    async function loadStats() {
+      const token = tokenInput.value.trim();
+      if (!token) {
+        message.textContent = '请输入管理访问 Token。';
+        return;
+      }
+
+      localStorage.setItem('fenge_visits_token', token);
+      message.textContent = '正在读取...';
+
+      try {
+        const response = await fetch(`/api/visits/summary?token=${encodeURIComponent(token)}&days=${encodeURIComponent(daysInput.value)}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '读取失败');
+
+        document.getElementById('pageviews').textContent = data.pageviews;
+        document.getElementById('visitors').textContent = data.uniqueVisitors;
+        document.getElementById('ips').textContent = data.uniqueIps;
+        document.getElementById('topPages').innerHTML = rows(data.topPages, item => (
+          `<tr><td>${item.path}</td><td>${item.views}</td><td>${item.visitors}</td></tr>`
+        ));
+        document.getElementById('byDay').innerHTML = rows(data.byDay, item => (
+          `<tr><td>${item.date}</td><td>${item.views}</td><td>${item.visitors}</td></tr>`
+        ));
+        document.getElementById('recent').innerHTML = rows(data.recent, item => (
+          `<tr><td>${new Date(item.at).toLocaleString('zh-CN')}</td><td>${item.path}</td><td>${item.visitorId || '-'}</td><td>${item.ip || '-'}</td></tr>`
+        ));
+        message.textContent = `已更新：${new Date(data.generatedAt).toLocaleString('zh-CN')}`;
+      } catch (error) {
+        message.textContent = error.message || '读取失败';
+      }
+    }
+
+    document.getElementById('loadBtn').addEventListener('click', loadStats);
+  </script>
+</body>
+</html>

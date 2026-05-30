@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI工具精选 - 枫哥AI进化社</title>
+  <meta name="description" content="枫哥AI工具精选，围绕写作、编程、图片设计、自媒体运营和素材资源，整理普通创作者高频可用的 AI 工具。">
+  <link rel="stylesheet" href="/home.css">
+  <link rel="stylesheet" href="/toolbox/toolbox.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <img src="/fenge-ai-evolution-logo.png" alt="枫哥AI进化社">
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/">首页</a>
+      <a href="/assistant/">内容工厂</a>
+      <a href="/wechat/">公众号排版</a>
+      <a class="active" href="/toolbox/">AI工具精选</a>
+      <a href="/upload">学员作品</a>
+      <a href="/#about">关于枫哥</a>
+    </nav>
+    <a class="header-cta" href="/assistant/">开始创作</a>
+  </header>
+
+  <main>
+    <section class="toolbox-hero">
+      <div>
+        <p class="toolbox-kicker">AI 工具精选</p>
+        <h1>少一点收藏夹焦虑，多一点今天能用的工具</h1>
+        <p>这里不追求堆满 100 个链接，只保留自媒体创作、排版、编程、设计和素材准备里真正高频的入口。</p>
+      </div>
+      <div class="search-box">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" placeholder="搜索工具、用途或适合人群">
+      </div>
+    </section>
+
+    <nav class="category-tabs" id="categoryTabs" aria-label="工具分类">
+      <button class="tab-btn active" data-category="all">全部</button>
+      <button class="tab-btn" data-category="writing">AI 写作</button>
+      <button class="tab-btn" data-category="coding">AI 编程</button>
+      <button class="tab-btn" data-category="design">图片设计</button>
+      <button class="tab-btn" data-category="media">自媒体运营</button>
+      <button class="tab-btn" data-category="resource">素材资源</button>
+    </nav>
+
+    <div class="stats-bar" id="statsText">共精选 <strong>20</strong> 个工具和资源</div>
+    <section class="tool-grid" id="toolGrid" aria-live="polite"></section>
+  </main>
+
+  <footer class="footer">
+    <p>工具不用收藏太多，先把一条工作流跑通。</p>
+    <a class="btn primary" href="/assistant/">开始生成文章</a>
+  </footer>
+
+  <script src="/toolbox/toolbox.js"></script>
+  <script src="/analytics.js"></script>
+</body>
+</html>

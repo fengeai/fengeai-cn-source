@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>短视频创作员工 - 枫哥AI进化社</title>
+    <link rel="stylesheet" href="/video/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="composer panel">
+        <input id="referenceImageFile" class="file-input" type="file" accept="image/png,image/jpeg,image/webp">
+        <select id="sourceType" class="visually-hidden" aria-label="输入来源">
+          <option value="topic" selected>一句主题</option>
+          <option value="article">已有文章</option>
+          <option value="paste">粘贴正文</option>
+        </select>
+
+        <div class="composer-body">
+          <label class="upload-tile" for="referenceImageFile">
+            <span class="upload-plus">+</span>
+            <span>图片素材</span>
+          </label>
+
+          <div id="referencePreview" class="reference-preview" hidden>
+            <img id="referencePreviewImage" alt="自定义形象预览">
+            <span id="referenceUploadStatus"></span>
+          </div>
+
+          <textarea
+            id="sourceContent"
+            rows="5"
+            placeholder="使用@可快速引用上传的文件，如：参考@图片1中的人物，生成一条30秒知识短视频。"
+          ></textarea>
+        </div>
+
+        <input id="referenceImageUrl" class="visually-hidden" aria-label="参考图 URL">
+
+        <div class="control-row">
+          <select id="qualityMode" aria-label="生成质量">
+            <option value="draft">参考生成</option>
+            <option value="better">提质预览</option>
+            <option value="final">正式成片</option>
+          </select>
+
+          <select id="resolution" aria-label="清晰度">
+            <option value="480p">480p</option>
+            <option value="720p" selected>720p</option>
+            <option value="1080p">1080p</option>
+          </select>
+
+          <select id="renderDuration" aria-label="生成秒数">
+            <option value="5" selected>5秒</option>
+            <option value="8">8秒</option>
+            <option value="12">12秒</option>
+            <option value="15">15秒</option>
+          </select>
+
+          <label class="toggle-pill">
+            <input id="usePersonReference" type="checkbox">
+            <span>人物一致</span>
+          </label>
+
+          <label class="toggle-pill active">
+            <input id="generateAudio" type="checkbox" checked>
+            <span>输出声音</span>
+          </label>
+
+          <button id="createPlan" class="generate-button" type="button" aria-label="生成分镜">↑</button>
+        </div>
+      </section>
+
+      <section class="status-row">
+        <span id="statusText">等待输入</span>
+        <span id="jobStatus"></span>
+      </section>
+
+      <section class="workspace">
+        <section class="panel plan-panel">
+          <div class="section-head">
+            <h2>AI 分镜方案</h2>
+            <button id="createJob" type="button" disabled>确认分镜，生成视频</button>
+          </div>
+
+          <label for="planTitleInput">标题</label>
+          <input id="planTitleInput" placeholder="还没有生成方案。">
+
+          <label for="scriptOutput">口播稿</label>
+          <textarea id="scriptOutput" rows="7" placeholder="还没有生成方案。"></textarea>
+
+          <div class="section-head compact">
+            <h2>分镜</h2>
+          </div>
+          <div id="storyboardOutput" class="storyboard"></div>
+        </section>
+
+        <section class="panel result-panel">
+          <h2>成片预览</h2>
+          <div id="segmentsOutput" class="segments"></div>
+          <a id="videoLink" href="#" hidden target="_blank" rel="noreferrer">查看生成结果</a>
+        </section>
+      </section>
+
+      <footer class="footer-links">
+        <span>免责声明</span>
+        <span>测试协议</span>
+        <span>隐私政策</span>
+      </footer>
+    </main>
+
+    <script src="/video/app.js" type="module"></script>
+  </body>
+</html>

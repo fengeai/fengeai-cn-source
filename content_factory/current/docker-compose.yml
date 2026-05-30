@@ -1,0 +1,44 @@
+services:
+  content-factory-api:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_BASE_PATH: /assistant
+        NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant
+    container_name: content_factory_api
+    env_file:
+      - ./apps/api/.env
+    environment:
+      DATABASE_URL: file:/data/assistant.db
+      WEB_URL: https://fengeai.cn/assistant
+    volumes:
+      - content_factory_data:/data
+    command: sh -c "npm --workspace @content-assistant/api run db:push && node apps/api/dist/index.js"
+    restart: unless-stopped
+    networks:
+      - fenge_net
+
+  content-factory-web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_BASE_PATH: /assistant
+        NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant
+    container_name: content_factory_web
+    environment:
+      NEXT_PUBLIC_BASE_PATH: /assistant
+      NEXT_PUBLIC_API_BASE_URL: https://fengeai.cn/assistant
+    command: npm --workspace @content-assistant/web run start
+    depends_on:
+      - content-factory-api
+    restart: unless-stopped
+    networks:
+      - fenge_net
+
+volumes:
+  content_factory_data:
+
+networks:
+  fenge_net:
+    external: true
+    name: fenge_upload_service_fenge_net

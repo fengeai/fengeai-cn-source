@@ -4,26 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>枫哥公众号一键排版助手</title>
+  <meta name="description" content="把文章粘贴进来，一键生成适合公众号后台的清爽排版稿。">
   <link rel="stylesheet" href="/wechat/styles.css">
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <p class="eyebrow">FENGE WECHAT FORMAT</p>
-      <h1>枫哥公众号一键排版助手</h1>
-      <p>文章写好后，一键变成公众号排版稿，并自动生成金句、封面提示词、配图与 GIF 位置建议。</p>
-    </div>
+    <a class="brand-link" href="/">枫哥AI进化社</a>
     <div class="actions">
-      <select id="themeSelect" aria-label="选择模板">
-        <option value="fenge">枫哥爆文排版模板</option>
-        <option value="clean">清爽阅读模板</option>
-        <option value="tech">科技实战模板</option>
-        <option value="warm">温暖成长模板</option>
-        <option value="magazine">杂志深读模板</option>
-        <option value="business">商业洞察模板</option>
-        <option value="course">课程交付模板</option>
-        <option value="minimal">极简留白模板</option>
-      </select>
+      <button id="sampleBtn">示例</button>
+      <button id="clearBtn">清空</button>
       <button id="formatBtn" class="primary">一键排版</button>
       <button id="copyBtn">复制到公众号</button>
     </div>
@@ -32,54 +21,18 @@
   <main class="layout">
     <section class="pane editor-pane">
       <div class="pane-title">
-        <h2>文章内容</h2>
-        <div class="mini-actions">
-          <button id="sampleBtn" class="ghost">示例</button>
-          <button id="clearBtn" class="ghost">清空</button>
+        <div>
+          <h1>公众号一键排版</h1>
+          <p>粘贴正文，生成清爽、可复制的公众号排版稿。</p>
         </div>
+        <span id="status" class="status-line"></span>
       </div>
-      <div class="toolbox">
-        <button class="chip" data-snippet="gold">金句卡</button>
-        <button class="chip" data-snippet="note">重点提醒</button>
-        <button class="chip" data-snippet="steps">步骤清单</button>
-        <button class="chip" data-snippet="compare">对比表</button>
-        <button class="chip" data-snippet="divider">分割线</button>
-        <button class="chip" data-snippet="cta">结尾 CTA</button>
-      </div>
-      <div class="gif-box">
-        <label>插入 GIF 动图
-          <input id="gifUrl" placeholder="粘贴 GIF 图片地址，例如 https://.../demo.gif">
-        </label>
-        <input id="gifAlt" placeholder="动图说明，例如：操作演示">
-        <button id="insertGifBtn" class="ghost">插入动图</button>
-      </div>
-      <div class="material-library">
-        <div class="material-head">
-          <div>
-            <h3>公众号素材库</h3>
-            <p>20 个高频排版组件，点击即可插入文章当前位置。</p>
-          </div>
-          <select id="materialFilter" aria-label="筛选素材分类">
-            <option value="all">全部素材</option>
-            <option value="opening">开头组件</option>
-            <option value="body">正文增强</option>
-            <option value="divider">分割线</option>
-            <option value="ending">结尾转化</option>
-            <option value="gif">GIF 模板</option>
-            <option value="prompt">封面提示词</option>
-          </select>
-        </div>
-        <div id="materialGrid" class="material-grid"></div>
-      </div>
-      <textarea id="markdownInput" spellcheck="false" placeholder="# 标题&#10;&#10;把你的 Markdown 文章粘贴到这里。"></textarea>
+      <textarea id="markdownInput" spellcheck="false" placeholder="# 标题&#10;&#10;把 Markdown 文章粘贴到这里"></textarea>
     </section>
 
     <section class="pane preview-pane">
       <div class="pane-title">
         <h2>公众号预览</h2>
-        <div class="mini-actions">
-          <button id="copyHtmlBtn" class="ghost">复制 HTML</button>
-        </div>
       </div>
       <div class="phone-shell">
         <article id="preview" class="preview empty">排版结果会显示在这里。</article>
@@ -87,33 +40,7 @@
     </section>
   </main>
 
-  <section class="insights">
-    <div class="panel">
-      <h2>识别结果</h2>
-      <div id="analysis" class="analysis-grid"></div>
-    </div>
-    <div class="panel">
-      <h2>推送公众号草稿箱</h2>
-      <p class="hint">GIF 和图片要稳定进入公众号草稿箱，建议先上传到公众号素材库或可靠图床，再把 URL 放进文章。</p>
-      <div class="form-grid">
-        <label>AppID<input id="appId" autocomplete="off" placeholder="用户自己的公众号 AppID"></label>
-        <label>AppSecret<input id="appSecret" type="password" autocomplete="off" placeholder="仅本次请求使用"></label>
-        <label>作者<input id="author" placeholder="作者名，可选"></label>
-        <label>封面 media_id<input id="thumbMediaId" placeholder="公众号素材库封面 media_id"></label>
-        <label>摘要<input id="digest" placeholder="不填则自动截取正文"></label>
-        <label>原文链接<input id="sourceUrl" placeholder="可选"></label>
-      </div>
-      <div class="publish-row">
-        <button id="draftBtn" class="primary">推送到草稿箱</button>
-        <span id="status"></span>
-      </div>
-    </div>
-  </section>
-
-  <template id="emptyAnalysis">
-    <p class="muted">点击“一键排版”后生成金句、重点段落、封面提示词、配图和 GIF 建议。</p>
-  </template>
-
   <script src="/wechat/app.js"></script>
+  <script src="/analytics.js"></script>
 </body>
 </html>

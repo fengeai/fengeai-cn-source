@@ -1,0 +1,41 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__next {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+@media (max-width: 760px) {
+  [data-v2-nav] {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  [data-v2-hero],
+  [data-v2-results],
+  [data-v2-publish-grid],
+  [data-v2-article-grid] {
+    grid-template-columns: 1fr !important;
+  }
+
+  [data-v2-title] {
+    font-size: 30px !important;
+  }
+
+  [data-v2-side-panel] {
+    min-height: 0 !important;
+  }
+}
